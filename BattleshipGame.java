@@ -8,7 +8,6 @@ import java.awt.event.*;
 */
 
 public class BattleshipGame extends JFrame implements ActionListener {
-
    //JPanels
    private JPanel message;
    private JPanel grid;
@@ -129,7 +128,7 @@ public class BattleshipGame extends JFrame implements ActionListener {
       setLocationRelativeTo(null);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
       setVisible(true);
-      setResizable(false);   
+      setResizable(false);
    }
 
    //determines what happens if a button is clicked
@@ -199,7 +198,11 @@ public class BattleshipGame extends JFrame implements ActionListener {
                                           JOptionPane.WARNING_MESSAGE,
                                           JOptionPane.YES_NO_OPTION);
          if (n == JOptionPane.YES_OPTION) {
-            // reset here
+            //Surrender button shows all the spots where the enemy ships were
+            // so a for loop going through the board to see where the enemy ships were
+            //TODO: write an isAIShip() function
+            // then setting the square as orange or something to indicate
+            // 
          } else if (n == JOptionPane.NO_OPTION) {
             // close window and go back
             // it does it by default so probably wont need this
@@ -213,6 +216,8 @@ public class BattleshipGame extends JFrame implements ActionListener {
          for (int j = 0; j < 8; j++) {
             //Changes each square color back to blue
             board[i][j].setBackground(new Color(51, 153, 255));
+            //Enables all the buttons again
+            board[i][j].setEnabled(true);
          }
       }
    }
@@ -229,6 +234,6 @@ public class BattleshipGame extends JFrame implements ActionListener {
 
    //Main function
    public static void main(String[] args) {
-      BattleshipGame game = new BattleshipGame();
+      StartMenu menu = new StartMenu();
    }
 }              
