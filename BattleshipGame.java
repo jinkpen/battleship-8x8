@@ -1,17 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
-/* Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
-   Due: 22 April 2016
-   Class: CSCI 1101, Section 01
-*/
+/**
+ * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
+ * Due: 22 April 2016
+ * Class: CSCI 1101, Section 01
+ */
 
 public class BattleshipGame extends JFrame implements ActionListener {
    //JPanels
    private JPanel message;
    private JPanel grid;
    private JPanel buttons;
+
+   private int type = 3;                                         //integer to distinguish which ship should be placed
+   BattleshipBoard game = new BattleshipBoard();                 //Object of type BattleshipBoard, which is used to access all other classes
+   ArrayList<Integer> coorRowPHolder = new ArrayList<Integer>(); //ArrrayList that is a placeholder for the coordinates for the humans rows for their ships
+   ArrayList<Integer> coorColPHolder = new ArrayList<Integer>(); //ArrrayList that is a placeholder for the coordinates for the humans columns for their ships
 
    private JButton[][] board;                //Game board
    private JLabel[] letters;                 //Letter labels [grid panel]
@@ -20,7 +27,7 @@ public class BattleshipGame extends JFrame implements ActionListener {
    private String[] nums = {"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8"};
 
    //Buttons panel
-   private JButton surrender,    //Button to reveal enemy ships
+   private JButton surrender,     //Button to reveal enemy ships
                    reset,         //Button to clear board
                    tutorial,
                    set;
@@ -40,10 +47,19 @@ public class BattleshipGame extends JFrame implements ActionListener {
                   destHit,          //Indicates human destroyer hit
                   humanTurn,        //Indicates human turn
                   aiHit,            //Indicates computer ship hit
-                  aiSunk;           //Indicate computer ship sunk
-                  //msg; //Label that can be any of the above messages [testing for simplification]
+                  aiSunk,           //Indicate computer ship sunk
+                  msg; //Label that can be any of the above messages [testing for simplification]
 
-   //private String[] msgs = {"You set the BATTLESHIP!", "You set the SUBMARINE!", "You set the DESTROYER!"};
+   private String[] msgs = {"You set the BATTLESHIP!",
+                           "You set the SUBMARINE!",
+                           "You set the DESTROYER!",
+                           "It's the computer's turn!",
+                           "Your BATTLESHIP was hit!",
+                           "Your SUBMARINE was hit!",
+                           "Your DESTROYER was hit!",
+                           "It's your turn!",
+                           "You hit one of the computer's ships!",
+                           "You sunk one of the computer's ships!"};
 
    private static int turn = 0;
 
@@ -63,14 +79,19 @@ public class BattleshipGame extends JFrame implements ActionListener {
       subSet = new JLabel("Submarine set");
       destSet = new JLabel("Destroyer set");
       // or even don't have a message jlabel set and just create a new one every time
-      /*msg = new JLabel("");
+      msg = new JLabel("");
+      msg.setFont(new Font("Arial", Font.PLAIN, 18));
       message.add(msg);
-      msg.setVisible(false);*/
+      msg.setVisible(false);
          
       //Create buttons for buttons panel
       surrender = new JButton("Surrender");
       buttons.add(surrender);
       surrender.addActionListener(this);
+
+      set = new JButton("Set");
+      buttons.add(set);
+      set.addActionListener(this);
 
       reset = new JButton("Reset");
       buttons.add(reset);
@@ -131,49 +152,171 @@ public class BattleshipGame extends JFrame implements ActionListener {
       setResizable(false);
    }
 
-   //determines what happens if a button is clicked
-   public void actionPerformed(ActionEvent e) {
-      //human that is playing the game
-      BattleshipBoard game = new BattleshipBoard(); 
-      //check if it is the set ship portion of the game
-      //if(person.getBattleship()[0] == null || person.getBattleship()[1] == null || person.getBattleship()[2] == null || person.getBattleship()[3] == null || person.getSubmarine()[0] == null || person.getSubmarine()[1] == null || person.getSubmarine()[2] == null || person.getDestroyer()[0] == null || person.getDestroyer()[1] == null){
-      for (int i = 0; i < 8; i++) { 
-         for (int j = 0; j < 8; j++) {
-            if (e.getSource() == board[i][j]) {
-               board[i][j].setBackground(Color.GRAY);
-               //use something to keep track of click buttons coordinates(Integer)
-             /*else if(e.getSource() == set){
-               use setShip method to keep track of coordinates in ship arrays
-             }*/
-               //showMsg(msgs[1]);
-               battleSet.setVisible(true);
-               board[i][j].setEnabled(false);
+   //Determines what happens if a button is clicked
+   public void actionPerformed(ActionEvent e) { 
+      //checks to see if it is the set ship portion of the game
+      if (type != 0) {
+         //checks all board buttons
+         for (int i = 0; i < 8;i++) { 
+            for (int j = 0; j < 8;j++) {
+               //enters if button clicked was one of the 64 game buttons, and its occipied status is set to false
+               if (e.getSource() == board[i][j] && !game.getBoard()[i][j].getOccupied()){
+                  board[i][j].setBackground(Color.GRAY);
+                  coorRowPHolder.add(i);
+                  coorColPHolder.add(j);
+                  game.getBoard()[i][j].setOccupied(true);
+
+                  showMsg(msgs[1]);
+                  //battleSet.setVisible(true);
+                  board[i][j].setEnabled(false);
+               } 
             }
          }
-      //}
+      } 
+      
+      //enters if the set button is clicked      
+      if (e.getSource() == set) {
+         //enters if it is the setting of the battleship phase, and placeholder ArrayLists are of size 4   
+         if (type == 3 && coorRowPHolder.size() == 4 && coorColPHolder.size() == 4){
+            //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
+            if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3)))){
+               for (int i = 0;i <= type;i++)
+                  game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
+               //decrements type by 1 so we can move on the the setting of the submarine   
+               type--;
+               //clears placeholder ArrayLists for further use
+               coorRowPHolder.clear();
+               coorColPHolder.clear();
+            } 
+            //enters if above conditions are not met     
+            else {
+               //tells user that they are setting the ships wrong, and asks them if they understand
+               int n = JOptionPane.showConfirmDialog(this, "When selecting where to place ships, they must be placed adjacent to each other",
+                                             "Got it?",
+                                             JOptionPane.WARNING_MESSAGE,
+                                             JOptionPane.YES_NO_OPTION);
+               //sets occupied status of the buttons clicked to false, and resets the color the the buttons to the standard blue                             
+               if (n == JOptionPane.YES_OPTION || n == JOptionPane.NO_OPTION) {
+                  for (int i = 0;i < coorRowPHolder.size();i++) {
+                     game.getBoard()[coorRowPHolder.get(i)][coorColPHolder.get(i)].setOccupied(false);
+                     board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setBackground(new Color(51, 153, 255));
+                  }
+                  //clears placeholder ArrayLists for use       
+                  coorRowPHolder.clear();
+                  coorColPHolder.clear();
+                  //resets board
+                  reset(); 
+               }  
+            }
+         }
+         //enters if it is the setting of the submarine phase, and if placeholder ArrayLists are of size 3         
+         else if (type == 2 && coorRowPHolder.size() == 3 && coorColPHolder.size() == 3){
+            //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
+            if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)))){
+               for (int i = 0;i <= type;i++)
+                  game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
+               //decrements type by 1 so we can move on the the setting of the destroyer      
+               type--;
+               //clears placeholder ArrayLists for further use
+               coorRowPHolder.clear();
+               coorColPHolder.clear();
+            }
+            //enters if above conditions are not met
+            else {
+               //tells user that they are setting the ships wrong, and asks them if they understand
+               int n = JOptionPane.showConfirmDialog(this, "When selecting where to place ships, they must be placed adjacent to each other",
+                                             "Got it?",
+                                             JOptionPane.WARNING_MESSAGE,
+                                             JOptionPane.YES_NO_OPTION);
+               //sets occupied status of the buttons clicked to false, and resets the color the the buttons to the standard blue                              
+               if (n == JOptionPane.YES_OPTION || n == JOptionPane.NO_OPTION) {
+                  for (int i = 0;i < coorRowPHolder.size();i++) {
+                     game.getBoard()[coorRowPHolder.get(i)][coorColPHolder.get(i)].setOccupied(false);
+                     board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setBackground(new Color(51, 153, 255));
+                  }
+                  //clears placeholder ArrayLists for use       
+                  coorRowPHolder.clear();
+                  coorColPHolder.clear();
+                  //resets board
+                  reset();
+               }
+            }    
+         }
+         //enters if it is the setting of the destroyer phase, and if placeholder ArrayLists are of size 2                  
+         else if (type == 1 && coorRowPHolder.size() == 2 && coorColPHolder.size() == 2){
+            //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
+            if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1  && (coorRowPHolder.get(0) == coorRowPHolder.get(1))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1  && (coorRowPHolder.get(0) == coorRowPHolder.get(1)))){
+               for (int i = 0; i <= type; i++)
+                  game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
+               //clears placeholder ArrayLists for use
+               coorRowPHolder.clear();
+               coorColPHolder.clear();
+               //decrements by 1 to let us know that the set ship phase is done
+               type--;
+               //sets the "set button" visible status to false(can no longer see this button after the setship phase)
+               set.setVisible(false);   
+            }
+            //enters if above conditions are not met
+            else {
+               //tells user that they are setting the ships wrong, and asks them if they understand
+               int n = JOptionPane.showConfirmDialog(this, "When selecting where to place ships, they must be placed adjacent to each other",
+                                             "Got it?",
+                                             JOptionPane.WARNING_MESSAGE,
+                                             JOptionPane.YES_NO_OPTION);
+               //sets occupied status of the buttons clicked to false, and resets the color the the buttons to the standard blue                              
+               if (n == JOptionPane.YES_OPTION || n == JOptionPane.NO_OPTION) {
+                  for(int i = 0;i < coorRowPHolder.size();i++){
+                     game.getBoard()[coorRowPHolder.get(i)][coorColPHolder.get(i)].setOccupied(false);
+                     board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setBackground(new Color(51, 153, 255));
+                  }
+                  //resets board
+                  reset();  
+               }  
+            }
+         }
+         //enters if the user has click to few/much buttons during the set ship phase      
+         else{
+            //tells user that they have clicked to little/much buttons when placing a ship
+            int n = JOptionPane.showConfirmDialog(this, "You must click the appropriate number of buttons (4 - battleship, 3 - submarine, 2 - destroyer)\n",
+                                             "Got it?",
+                                             JOptionPane.WARNING_MESSAGE,
+                                             JOptionPane.YES_NO_OPTION);
+            //sets occupied status of the buttons clicked to false, and resets the color the the buttons to the standard blue                                 
+            if (n == JOptionPane.YES_OPTION || n == JOptionPane.NO_OPTION) {
+                  for(int i = 0; i < coorRowPHolder.size(); i++){
+                     game.getBoard()[coorRowPHolder.get(i)][coorColPHolder.get(i)].setOccupied(false);
+                     board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setBackground(new Color(51, 153, 255));
+                   } 
+               //resets placeholder ArrayLists         
+               coorRowPHolder.clear();
+               coorColPHolder.clear();
+               //resets board
+               reset();
+            }  
+         }                                          
       }
-   
+
       //If player presses the tutorial button
       if (e.getSource() == tutorial) {
          //Pop up box displaying the tutorial
          JOptionPane.showMessageDialog(this, "<html><h1>In the game of Battleship,<br>you are at war!</h1>"
-                 + "<br>You are the commander of the Navy, and to<br>be victorious you must sink all"
-                 + "of your<br>opponent's ships.<br>"
-                 + "<br>You have three ships that you must place:<br><ul>"
-                 + "<li>A battleship that sinks after 4 hits</li>"
-                 + "<li>A submarine that sinks after 3 hits</li>"
-                 + "<li>A destroyer that sinks after 2 hits</li></ul>"
-                 + "\nYour opponent has the same types of ships."
-                 + "\nYou will place your ships on the board first\nfollowed by your opponent."
-                 + "\nYour opponent's ships will be hidden from\nyou, and yours from your opponent."
-                 + "\n\nTo fire at your enemy, enter the column letter\nand row number you wish to target."
-                 + "\nYou cannot fire at your own ships."
-                 + "\n\nIf you hit an enemy ship, a red dot will appear\nat the location you targeted."
-                 + "\nIf you miss your enemy's ship, a white dot\nwill appear in the location you targeted."
-                 + "\nIf you sink an enemy ship, your enemy will say,\n\"You sunk my Battleship!\""
-                 + "\n\nThe first player to sink all of their enemy's ships\nwins the game.",
-                 "Tutorial", 
-                 JOptionPane.INFORMATION_MESSAGE);
+                        + "<br>You are the commander of the Navy, and to<br>be victorious you must sink all"
+                        + "of your<br>opponent's ships.<br>"
+                        + "<br>You have three ships that you must place:<br><ul>"
+                        + "<li>A battleship that sinks after 4 hits</li>"
+                        + "<li>A submarine that sinks after 3 hits</li>"
+                        + "<li>A destroyer that sinks after 2 hits</li></ul>"
+                        + "\nYour opponent has the same types of ships."
+                        + "\nYou will place your ships on the board first\nfollowed by your opponent."
+                        + "\nYour opponent's ships will be hidden from\nyou, and yours from your opponent."
+                        + "\n\nTo fire at your enemy, enter the column letter\nand row number you wish to target."
+                        + "\nYou cannot fire at your own ships."
+                        + "\n\nIf you hit an enemy ship, a red dot will appear\nat the location you targeted."
+                        + "\nIf you miss your enemy's ship, a white dot\nwill appear in the location you targeted."
+                        + "\nIf you sink an enemy ship, your enemy will say,\n\"You sunk my Battleship!\""
+                        + "\n\nThe first player to sink all of their enemy's ships\nwins the game.",
+                        "Tutorial", 
+                        JOptionPane.INFORMATION_MESSAGE);
       } 
 
       //If player presses the reset button
@@ -220,17 +363,24 @@ public class BattleshipGame extends JFrame implements ActionListener {
             board[i][j].setEnabled(true);
          }
       }
+      msg.setVisible(false);
    }
 
-   //Shows message for a minute then disappears
-   /*public void showMsg(String m){
-      try{
-         msg.setText(m);
-         msg.setVisible(true);
-         Thread.sleep(60000);
-         msg.setVisible(false);
-      } catch (Exception e){}
-   }*/
+   //Shows message for 30 seconds then disappears
+   public void showMsg(String m) {
+      //Set the text and make it visible
+      msg.setText(m);
+      msg.setVisible(true);
+      //After 30 seconds the message disappears
+      //Creating a timer that waits 30 seconds to hide the JLabel
+      Timer t = new Timer(30000, new ActionListener() {
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            msg.setVisible(false);
+         }
+      });
+      t.start();
+   }
 
    //Main function
    public static void main(String[] args) {

@@ -1,11 +1,9 @@
+/**
+ * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
+ * Due: 22 April 2016
+ * Class: CSCI 1101, Section 01
+ */
 public class Ship {
-
-/* Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
-   Due: 22 April 2016
-   Class: CSCI 1101, Section 01
-
-*/
-
    private boolean hit;    //Set to true if ship object hit 
    private boolean sunk;   //Set to true if all ship object in array are hit
    private int row;        //x coordinate of 
@@ -15,8 +13,8 @@ public class Ship {
    public Ship() {
       hit = false;
       sunk = false;
-      row = (Integer)null;
-      col = (Integer)null;
+      row = -1;
+      col = -1;
    }
    
    //Mutator/accessor methods
