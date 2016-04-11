@@ -208,7 +208,7 @@ public class BattleshipGame extends JFrame implements ActionListener {
          if (type == 3 && coorRowPHolder.size() == 4 && coorColPHolder.size() == 4) {
             //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
             if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3)))) {
-               for (int i = 0;i <= type;i++) {
+               for (int i = 0; i <= type; i++) {
                   game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
                   board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setEnabled(false);
                }   
@@ -251,8 +251,10 @@ public class BattleshipGame extends JFrame implements ActionListener {
          else if (type == 2 && coorRowPHolder.size() == 3 && coorColPHolder.size() == 3){
             //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
             if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)))){
-               for (int i = 0; i <= type; i++)
+               for (int i = 0; i <= type; i++) {
                   game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
+                  board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setEnabled(false);
+               }
                //decrements type by 1 so we can move on the the setting of the destroyer      
                type--;
                //clears placeholder ArrayLists for further use
