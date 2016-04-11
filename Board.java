@@ -1,11 +1,13 @@
-/* Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
-   Due: 22 April 2016
-   Class: CSCI 1101, Section 01
-   
-   Board Class: Attributes - rows 
-                           - columns
-                Operations - constructor (takes two int args)
-*/
+/**
+ * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
+ * Due: 22 April 2016
+ * Class: CSCI 1101, Section 01
+ *
+ *
+ * Board Class: Attributes - rows 
+ *                         - columns
+ *              Operations - constructor (takes two int args)
+ */
 
 public abstract class Board {
    
@@ -21,5 +23,4 @@ public abstract class Board {
    //Accessor methods
    public int getRows() {return rows;}
    public int getCols() {return cols;}
-   
 }

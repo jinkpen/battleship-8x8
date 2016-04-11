@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 
-/* Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
-   Due: 22 April 2016
-   Class: CSCI 1101, Section 01
-
-*/
+/**
+ * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
+ * Due: 22 April 2016
+ * Class: CSCI 1101, Section 01
+ */
 
 public class AI extends Player {
    
@@ -12,6 +12,8 @@ public class AI extends Player {
    
    public AI() {
       super();
+      getBattleship()[0].setRow(3);
+      getBattleship()[0].setCol(3);
       targeted = new ArrayList<Block>();
    }
    
@@ -34,8 +36,7 @@ public class AI extends Player {
       
       //Initialize direction with pseudorandom number (0-1)
       direction = (int)(Math.random()*1);
-      //Computer picks block for starting point of 
-      
+      //Computer picks block for starting point of
    }
    
    public void setSubmarine(Human human) {
@@ -43,8 +44,4 @@ public class AI extends Player {
    
    public void setDestroyer(Human human) {
    }
-   
-}   
-   
-   
-   
+}

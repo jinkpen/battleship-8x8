@@ -10,6 +10,7 @@ import java.util.ArrayList;
  */
 
 public class BattleshipGame extends JFrame implements ActionListener {
+
    //JPanels
    private JPanel message;
    private JPanel grid;
@@ -29,8 +30,8 @@ public class BattleshipGame extends JFrame implements ActionListener {
    //Buttons panel
    private JButton surrender,     //Button to reveal enemy ships
                    reset,         //Button to clear board
-                   tutorial,
-                   set;
+                   tutorial,      //Button to view tutorial
+                   set;           //Button to set ships
 
    // private JLabel a, b, c, d, e, f, g, h,    //Labels for around the game board (grid panel)
    //                one, two, three, four,
@@ -59,35 +60,40 @@ public class BattleshipGame extends JFrame implements ActionListener {
                            "Your DESTROYER was hit!",
                            "It's your turn!",
                            "You hit one of the computer's ships!",
-                           "You sunk one of the computer's ships!"};
+                           "You sunk one of the computer's ships!",
+                           "You missed!"};
 
    private static int turn = 0;
 
    //Contructor 
    public BattleshipGame() {
       //Create panels
-      message = new JPanel(new FlowLayout());
+      message = new JPanel(new GridBagLayout());
       message.setPreferredSize(new Dimension(this.WIDTH, 100));
       grid = new JPanel(new GridLayout(9, 9, 0, 0));
       buttons = new JPanel(new FlowLayout());
-       
+      
+      //I'm using a different method, not sure how ya'll prefer it tho
       //Create labels for message panel
-      battleSet = new JLabel("Battleship set");
+      /*battleSet = new JLabel("Battleship set");
       message.add(battleSet);
       battleSet.setVisible(false);
        
       subSet = new JLabel("Submarine set");
-      destSet = new JLabel("Destroyer set");
-      // or even don't have a message jlabel set and just create a new one every time
-      msg = new JLabel("");
+      destSet = new JLabel("Destroyer set");*/
+
+      //Label changes when certain events occur
+      msg = new JLabel("Commander! Set your ships!");
       msg.setFont(new Font("Arial", Font.PLAIN, 18));
       message.add(msg);
-      msg.setVisible(false);
+      msg.setVisible(true);
          
       //Create buttons for buttons panel
       surrender = new JButton("Surrender");
       buttons.add(surrender);
       surrender.addActionListener(this);
+      //Hiding the surrender button because it is unnecessary until game starts
+      surrender.setVisible(false);
 
       set = new JButton("Set");
       buttons.add(set);
@@ -144,7 +150,7 @@ public class BattleshipGame extends JFrame implements ActionListener {
       add(buttons, BorderLayout.SOUTH);
 
       //Setting window properties
-      setTitle("Battleship");
+      setTitle("Battleship!");
       setSize(450, 600);
       setLocationRelativeTo(null);
       setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -157,36 +163,62 @@ public class BattleshipGame extends JFrame implements ActionListener {
       //checks to see if it is the set ship portion of the game
       if (type != 0) {
          //checks all board buttons
-         for (int i = 0; i < 8;i++) { 
-            for (int j = 0; j < 8;j++) {
-               //enters if button clicked was one of the 64 game buttons, and its occipied status is set to false
-               if (e.getSource() == board[i][j] && !game.getBoard()[i][j].getOccupied()){
+         for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+               //enters if button clicked was one of the 64 game buttons, and its occupied status is set to false
+               if (e.getSource() == board[i][j] && !game.getBoard()[i][j].getOccupied()) {
                   board[i][j].setBackground(Color.GRAY);
                   coorRowPHolder.add(i);
                   coorColPHolder.add(j);
                   game.getBoard()[i][j].setOccupied(true);
-
-                  showMsg(msgs[1]);
-                  //battleSet.setVisible(true);
-                  board[i][j].setEnabled(false);
                } 
             }
          }
-      } 
+      }
+      //enters if it is the attack portion of the game 
+      else if (type == 0) {
+         for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+               //If a board button is pressed 
+               if (e.getSource() == board[i][j]) {
+                  //Changes game board button to red if it hits enemy ship
+                  game.getHuman().fire(game.getAI(), i, j);
+                  //If the AI's ship is hit
+                  if (game.getAI().getBattleship()[0].getHit() || game.getAI().getBattleship()[1].getHit() || game.getAI().getBattleship()[2].getHit() || game.getAI().getBattleship()[3].getHit() ||
+                      game.getAI().getSubmarine()[0].getHit() || game.getAI().getSubmarine()[1].getHit() || game.getAI().getSubmarine()[2].getHit() ||
+                      game.getAI().getDestroyer()[0].getHit() || game.getAI().getDestroyer()[1].getHit()) {
+                     //Change color to red
+                     board[i][j].setBackground(Color.RED);
+                     showMsg(msgs[8]);
+                  }
+                  //Changes game board button to white if it hits no enemy ship
+                  else {
+                     board[i][j].setBackground(Color.WHITE);
+                     game.getBoard()[i][j].setMiss(true);
+                     showMsg(msgs[10]);
+                  }
+               }
+            }
+         }
+      }
       
       //enters if the set button is clicked      
       if (e.getSource() == set) {
          //enters if it is the setting of the battleship phase, and placeholder ArrayLists are of size 4   
-         if (type == 3 && coorRowPHolder.size() == 4 && coorColPHolder.size() == 4){
+         if (type == 3 && coorRowPHolder.size() == 4 && coorColPHolder.size() == 4) {
             //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
-            if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3)))){
-               for (int i = 0;i <= type;i++)
+            if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorRowPHolder.get(2) - coorRowPHolder.get(3)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2)) && (coorColPHolder.get(2) == coorColPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorColPHolder.get(2) - coorColPHolder.get(3)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)) && (coorRowPHolder.get(2) == coorRowPHolder.get(3)))) {
+               for (int i = 0;i <= type;i++) {
                   game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
+                  board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setEnabled(false);
+               }   
                //decrements type by 1 so we can move on the the setting of the submarine   
                type--;
                //clears placeholder ArrayLists for further use
                coorRowPHolder.clear();
                coorColPHolder.clear();
+               //Printing a message that tells the user that the battleship was set
+               showMsg(msgs[0]);
             } 
             //enters if above conditions are not met     
             else {
@@ -197,7 +229,7 @@ public class BattleshipGame extends JFrame implements ActionListener {
                                              JOptionPane.YES_NO_OPTION);
                //sets occupied status of the buttons clicked to false, and resets the color the the buttons to the standard blue                             
                if (n == JOptionPane.YES_OPTION || n == JOptionPane.NO_OPTION) {
-                  for (int i = 0;i < coorRowPHolder.size();i++) {
+                  for (int i = 0; i < coorRowPHolder.size(); i++) {
                      game.getBoard()[coorRowPHolder.get(i)][coorColPHolder.get(i)].setOccupied(false);
                      board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setBackground(new Color(51, 153, 255));
                   }
@@ -213,18 +245,20 @@ public class BattleshipGame extends JFrame implements ActionListener {
          else if (type == 2 && coorRowPHolder.size() == 3 && coorColPHolder.size() == 3){
             //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
             if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorRowPHolder.get(1) - coorRowPHolder.get(2)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1)) && (coorColPHolder.get(1) == coorColPHolder.get(2))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == 1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1 && (coorColPHolder.get(1) - coorColPHolder.get(2)) == -1 && (coorRowPHolder.get(0) == coorRowPHolder.get(1)) && (coorRowPHolder.get(1) == coorRowPHolder.get(2)))){
-               for (int i = 0;i <= type;i++)
+               for (int i = 0; i <= type; i++)
                   game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
                //decrements type by 1 so we can move on the the setting of the destroyer      
                type--;
                //clears placeholder ArrayLists for further use
                coorRowPHolder.clear();
                coorColPHolder.clear();
+               //Printing a message that tells the user that the submarine was set
+               showMsg(msgs[1]);
             }
             //enters if above conditions are not met
             else {
                //tells user that they are setting the ships wrong, and asks them if they understand
-               int n = JOptionPane.showConfirmDialog(this, "When selecting where to place ships, they must be placed adjacent to each other",
+               int n = JOptionPane.showConfirmDialog(this, "When selecting where to place ships you must place them adjacent to eachother",
                                              "Got it?",
                                              JOptionPane.WARNING_MESSAGE,
                                              JOptionPane.YES_NO_OPTION);
@@ -246,15 +280,21 @@ public class BattleshipGame extends JFrame implements ActionListener {
          else if (type == 1 && coorRowPHolder.size() == 2 && coorColPHolder.size() == 2){
             //checks to see if board buttons click are adjacent and in a straight line, if so sets the ship coordinates
             if (((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == 1 && (coorColPHolder.get(0) == coorColPHolder.get(1))) || ((coorRowPHolder.get(0) - coorRowPHolder.get(1)) == -1 && (coorColPHolder.get(0) == coorColPHolder.get(1))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == 1  && (coorRowPHolder.get(0) == coorRowPHolder.get(1))) || ((coorColPHolder.get(0) - coorColPHolder.get(1)) == -1  && (coorRowPHolder.get(0) == coorRowPHolder.get(1)))){
-               for (int i = 0; i <= type; i++)
+               for (int i = 0; i <= type; i++) {
                   game.getHuman().setShips(coorRowPHolder.get(i),coorColPHolder.get(i),type);
+                  board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setEnabled(false);
+               }
                //clears placeholder ArrayLists for use
                coorRowPHolder.clear();
                coorColPHolder.clear();
                //decrements by 1 to let us know that the set ship phase is done
                type--;
-               //sets the "set button" visible status to false(can no longer see this button after the setship phase)
-               set.setVisible(false);   
+               //hides the set button as the set up phase is over
+               set.setVisible(false);
+               //shows the surrender button as the game has started
+               surrender.setVisible(true);
+               //Printing a message that tells the user that the destroyer was set
+               showMsg("<html><center>"+msgs[2]+"<br>Get ready Commander! Enemy ships incoming!</html>");
             }
             //enters if above conditions are not met
             else {
@@ -305,7 +345,7 @@ public class BattleshipGame extends JFrame implements ActionListener {
                         + "<br>You have three ships that you must place:<br><ul>"
                         + "<li>A battleship that sinks after 4 hits</li>"
                         + "<li>A submarine that sinks after 3 hits</li>"
-                        + "<li>A destroyer that sinks after 2 hits</li></ul>"
+                        + "<li>A destroyer that sinks after 2 hits</li></ul></html>"
                         + "\nYour opponent has the same types of ships."
                         + "\nYou will place your ships on the board first\nfollowed by your opponent."
                         + "\nYour opponent's ships will be hidden from\nyou, and yours from your opponent."
@@ -326,12 +366,17 @@ public class BattleshipGame extends JFrame implements ActionListener {
                                           JOptionPane.WARNING_MESSAGE,
                                           JOptionPane.YES_NO_OPTION);
          if (n == JOptionPane.YES_OPTION) {
-            // reset here
+            //Resets board
             reset();
-         } else if (n == JOptionPane.NO_OPTION) {
-            // close window and go back
-            // it does it by default so probably wont need this
+            game.getHuman().resetShips();
+            for (int r = 0; r < 8; r++) {
+               for (int c = 0; c < 8; c++) {
+                  //unoccupies the buttons
+                  game.getBoard()[r][c].setOccupied(false);
+               }
+            }
          }
+         //If the no option was chosen does it closes the window and continues by default
       }
 
       //If player presses the surrender button
@@ -345,16 +390,17 @@ public class BattleshipGame extends JFrame implements ActionListener {
             // so a for loop going through the board to see where the enemy ships were
             //TODO: write an isAIShip() function
             // then setting the square as orange or something to indicate
-            // 
-         } else if (n == JOptionPane.NO_OPTION) {
-            // close window and go back
-            // it does it by default so probably wont need this
+            // board[AI x][AI y].setBackground(new Color(255, 115, 0));
          }
+         //If the no option was chosen does it closes the window and continues by default
       }
    }                                             
 
-   //Resets the board
+   //Resets the board (externally)
    public void reset() {
+      //clearing the array for further use
+      coorRowPHolder.clear();
+      coorColPHolder.clear();
       for (int i = 0; i < 8; i++) { 
          for (int j = 0; j < 8; j++) {
             //Changes each square color back to blue
@@ -363,7 +409,13 @@ public class BattleshipGame extends JFrame implements ActionListener {
             board[i][j].setEnabled(true);
          }
       }
+      //type resets back to 3
+      type = 3;
+      //any message that appeared disappears
       msg.setVisible(false);
+      //incase the set button is hidden and the surrender button is showing
+      set.setVisible(true);
+      surrender.setVisible(false);
    }
 
    //Shows message for 30 seconds then disappears

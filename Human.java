@@ -6,10 +6,11 @@
 
 public class Human extends Player {
 
-   public Human() {  
+   //Constructor
+   public Human() {
       super();
    }
-   //method takes in Row value, column value, and type of ship value. Then saves the coordinates into 3 different arrays
+   //Method takes in row value, column value, and type of ship value. Then saves the coordinates into 3 different arrays
    public void setShips(int r, int c, int type) {
       //enters here if its the battleship placing phase
       if (type == 3) {
@@ -33,10 +34,10 @@ public class Human extends Player {
             getBattleship()[3].setRow(r);
             getBattleship()[3].setCol(c);
          }
-      } 
-      //enters here if its the submarine placing phase  
+      }
+      //enters here if its the submarine placing phase
       else if (type == 2) {
-         //sets coordinates of the first ship object in the submarine array 
+         //sets coordinates of the first ship object in the submarine array
          if (getSubmarine()[0].getRow() == -1) {
             getSubmarine()[0].setRow(r);
             getSubmarine()[0].setCol(c);
@@ -65,26 +66,58 @@ public class Human extends Player {
             getDestroyer()[1].setCol(c);
          }
       }
-   }             
-   
-   //public void fire(AI ai, int r, int c) {
-      //Player clicks on block
-      
-      //If block has already been selected, nothing happens (block cannot be clicked twice)
-      //Player stays on turn
-      
-      //If block is occupied with player's own ship, nothing happens 
-      //(game will not let player fire on own ship), player stays on turn
-      
-      //If block is not occupied, block coloured in white
-      //Block added to targeted array
-      //Message reads, "You missed"
-      
-      //If block is occupied by enemy ship, 
-      //Block coloured in red
-      //Enemy ship (object hit) set to hit
-      //If all other Ship objects that Ship array are hit,
-      //All objects in 
-   //}
-   
+   }
+   //method that determines if one of the AI's subsections are hit
+   public void fire(AI ai, int r, int c) {
+      //checks if any section of the battleship, submarine, or destroyer is hit. Sets variable boolean "hit" to true if it is hit
+      if (r == ai.getBattleship()[0].getRow() && c == ai.getBattleship()[0].getCol())
+         ai.getBattleship()[0].setHit(true);
+      else if (r == ai.getBattleship()[1].getRow() && c == ai.getBattleship()[1].getCol())
+         ai.getBattleship()[1].setHit(true);
+      else if (r == ai.getBattleship()[2].getRow() && c == ai.getBattleship()[2].getCol())
+         ai.getBattleship()[2].setHit(true);
+      else if (r == ai.getBattleship()[3].getRow() && c == ai.getBattleship()[3].getCol())
+         ai.getBattleship()[3].setHit(true);
+      else if (r == ai.getSubmarine()[0].getRow() && c == ai.getSubmarine()[0].getCol())
+         ai.getSubmarine()[0].setHit(true);
+      else if (r == ai.getSubmarine()[1].getRow() && c == ai.getSubmarine()[1].getCol())
+         ai.getSubmarine()[1].setHit(true);
+      else if (r == ai.getSubmarine()[2].getRow() && c == ai.getSubmarine()[2].getCol())
+         ai.getSubmarine()[2].setHit(true);
+      else if (r == ai.getDestroyer()[0].getRow() && c == ai.getSubmarine()[0].getCol())
+         ai.getDestroyer()[0].setHit(true);
+      else if (r == ai.getDestroyer()[1].getRow() && c == ai.getSubmarine()[1].getCol())
+         ai.getDestroyer()[1].setHit(true);
+
+      //checks if all of the AI's 4 sections of the battleship are hit, sets battleship's variable boolean "sunk" to true if they are all hit
+      if (ai.getBattleship()[0].getHit() && ai.getBattleship()[1].getHit() && ai.getBattleship()[2].getHit() && ai.getBattleship()[3].getHit())
+         ai.setBattleSunk(true);
+      //checks if all of the AI's 3 sections of the submarine are hit, sets submarine's variable boolean "sunk" to true if they are all hit
+      else if (ai.getSubmarine()[0].getHit() && ai.getSubmarine()[1].getHit() && ai.getSubmarine()[2].getHit())
+         ai.setSubSunk(true);
+      //checks if both of the AI's sections of the destroyer are hit, sets destroyer's variable boolean "sunk" to true if they are both hit
+      else if (ai.getDestroyer()[0].getHit() && ai.getDestroyer()[1].getHit())
+         ai.setDestroySunk(true);
+      //check if the all three of the AI's ships are sunk, if so AI's defeated variable is set to true
+      if (ai.getBattleSunk() && ai.getSubSunk() && ai.getDestroySunk())
+         ai.setDefeated(true);
+   }
+   //Resets the ships so none are set or occupied
+   public void resetShips(){
+      // resetting the battleships
+      for(int i = 0; i < 4; i++){
+         getBattleship()[i].setRow(-1);
+         getBattleship()[i].setCol(-1);
+      }
+      // resetting the submarine
+      for(int i = 0; i < 3; i++){
+         getSubmarine()[i].setRow(-1);
+         getSubmarine()[i].setCol(-1);
+      }
+      // resetting the destroyer
+      for(int i = 0; i < 2; i++){
+         getDestroyer()[i].setRow(-1);
+         getDestroyer()[i].setCol(-1);
+      }
+   }
 }

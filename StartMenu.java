@@ -10,10 +10,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/* Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
-   Due: 22 April 2016
-   Class: CSCI 1101, Section 01
-*/
+/**
+ * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
+ *  Due: 22 April 2016
+ * Class: CSCI 1101, Section 01
+ */
 
 public class StartMenu extends JFrame implements ActionListener {
    //Instance variables
@@ -54,13 +55,14 @@ public class StartMenu extends JFrame implements ActionListener {
    }
 
    public void actionPerformed(ActionEvent e) {
+      //If deploy button is pressed
       if (e.getSource() == deploy) {
          //Hides the start menu
          setVisible(false);
          //Create a Battleship game object
          BattleshipGame game = new BattleshipGame();
       }
-
+      //If credits button is pressed
       else if(e.getSource() == credits) {
          //Pop up box displaying who coded this!
          JOptionPane.showMessageDialog(this, "Coded by: Joanna Bistekos, Jessica Inkpen and Jon MacDonald",

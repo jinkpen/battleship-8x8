@@ -1,15 +1,19 @@
-/* Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
-   Due: 22 April 2016
-   Class: CSCI 1101, Section 01
+import java.util.ArrayList;
 
-*/
+/**
+ * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
+ * Due: 22 April 2016
+ * Class: CSCI 1101, Section 01
+ */
+
 public abstract class Player {
+
    //private String name;        //Player's name
    //private String symbol;      //Symbol that represents player on board (X or O)
    private Ship[] battleship;  //4-element Ship array
    private Ship[] submarine;   //3-element Ship array
    private Ship[] destroyer;   //2-element Ship array
-   //private ArrayList<Block> targeted;  //Holds blocks that player has targetd
+   private ArrayList<Block> targeted;  //Holds blocks that player has targetd
    private boolean battleSunk;         //Set to true if all elements in battleship are "hit"
    private boolean subSunk;            //Set to true if all elements in battleship are "hit"
    private boolean destroySunk;        //Set to true if all elements in battleship are "hit"
@@ -38,7 +42,7 @@ public abstract class Player {
    public Ship[] getBattleship() {return battleship;}
    public Ship[] getSubmarine() {return submarine;}
    public Ship[] getDestroyer() {return destroyer;}
-   //public ArrayList<Block> getTargeted() {return targeted;}
+   public ArrayList<Block> getTargeted() {return targeted;}
    public boolean getBattleSunk() {return battleSunk;}
    public boolean getSubSunk() {return subSunk;}
    public boolean getDestroySunk() {return destroySunk;}
@@ -48,7 +52,7 @@ public abstract class Player {
    public void setBattleship(Ship[] bs) {battleship = bs;}
    public void setSubmarine(Ship[] sm) {submarine = sm;}
    public void setDestroyer(Ship[] d) {destroyer = d;}
-   //public void setTargeted(ArrayList<Block> t) {targeted = t;}
+   public void setTargeted(ArrayList<Block> t) {targeted = t;}
    public void setBattleSunk(boolean bs) {battleSunk = bs;}
    public void setSubSunk(boolean ss) {subSunk = ss;}
    public void setDestroySunk(boolean ds) {destroySunk = ds;}
