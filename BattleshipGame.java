@@ -237,8 +237,14 @@ public class BattleshipGame extends JFrame implements ActionListener {
                   coorRowPHolder.clear();
                   coorColPHolder.clear();
                   //resets board
-                  reset(); 
-               }  
+                  reset();
+                  for (int r = 0; r < 8; r++) {
+                     for (int c = 0; c < 8; c++) {
+                        //unoccupies the buttons
+                        game.getBoard()[r][c].setOccupied(false);
+                     }
+                  }
+               }
             }
          }
          //enters if it is the setting of the submarine phase, and if placeholder ArrayLists are of size 3         
@@ -273,6 +279,12 @@ public class BattleshipGame extends JFrame implements ActionListener {
                   coorColPHolder.clear();
                   //resets board
                   reset();
+                  for (int r = 0; r < 8; r++) {
+                     for (int c = 0; c < 8; c++) {
+                        //unoccupies the buttons
+                        game.getBoard()[r][c].setOccupied(false);
+                     }
+                  }
                }
             }    
          }
@@ -310,7 +322,13 @@ public class BattleshipGame extends JFrame implements ActionListener {
                      board[coorRowPHolder.get(i)][coorColPHolder.get(i)].setBackground(new Color(51, 153, 255));
                   }
                   //resets board
-                  reset();  
+                  reset();
+                  for (int r = 0; r < 8; r++) {
+                     for (int c = 0; c < 8; c++) {
+                        //unoccupies the buttons
+                        game.getBoard()[r][c].setOccupied(false);
+                     }
+                  }
                }  
             }
          }
@@ -332,6 +350,12 @@ public class BattleshipGame extends JFrame implements ActionListener {
                coorColPHolder.clear();
                //resets board
                reset();
+               for (int r = 0; r < 8; r++) {
+                  for (int c = 0; c < 8; c++) {
+                     //unoccupies the buttons
+                     game.getBoard()[r][c].setOccupied(false);
+                  }
+               }
             }  
          }                                          
       }
