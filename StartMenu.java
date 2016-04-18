@@ -60,7 +60,7 @@ public class StartMenu extends JFrame implements ActionListener {
          //Hides the start menu
          setVisible(false);
          //Create a Battleship game object
-         BattleshipGame game = new BattleshipGame();
+         PlayBattleship play = new PlayBattleship();
       }
       //If credits button is pressed
       else if(e.getSource() == credits) {
