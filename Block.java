@@ -9,7 +9,7 @@ public class Block {
    private int id;               //Id number for block (if less than 64, block is in human grid, otherwise block is in ai grid)       
    private int row;              //x coordinate of block
    private int col;              //y coordinate of block
-   private int ship;             //Idetifies which ship occupies block
+   private int ship;             //Identifies which ship occupies block 
    private boolean miss;         //Initialized as false, set to true if block has been targeted, but missed
    private boolean hit;          //Initialized as false, set to true if block has been hit [player's ship hit]
    private boolean sunk;         //Initialized as false, set to true if block is part of a ship that has been sunk
@@ -46,8 +46,5 @@ public class Block {
    public boolean getSunk() {return sunk;}
    public boolean getOccupied() {return occupied;}
    
-   public String toString() {       //TEST <---------- REMOVE METHOD
-      return "id: " + id + ", row: " + row + ", col: " + col + 
-             "\nOccupied: " + occupied;
-   }
+   
 }
