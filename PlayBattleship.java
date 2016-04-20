@@ -264,6 +264,7 @@ public class PlayBattleship extends JFrame implements ActionListener {
       String[] lets = {"   A", "   B", "   C", "   D", "   E", "   F", "   G", "   H"};
       String[] nums = {"   1", "   2", "   3", "   4", "   5", "   6", "   7", "   8"};  
       JPanel grid = new JPanel(new GridLayout(9, 9, 0, 0));
+      grid.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
       //Create JButtons and add to panel
       for (int i = 0; i < 9; i++) {
          for (int j = 0; j < 9; j++) {

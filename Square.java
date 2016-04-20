@@ -11,7 +11,6 @@ import java.awt.event.*;
  public class Square extends JButton{
    
    private Block block;
-   private boolean visible;
    
    //Colour definitions
    public static Color oceanColor = new Color(51, 153, 255);
@@ -27,16 +26,10 @@ import java.awt.event.*;
       setBackground(oceanColor);
       setOpaque(true);
       setBorderPainted(true);
-      visible = false;
    }
    
    public void setBlock(Block b) {block = b;}
-   public void setVisible(boolean v) {visible = v;}
    public Block getBlock() {return block;}
-   public boolean getVisible() {return visible;}
-   
-   public String toString() {       //TEST <---------- REMOVE METHOD
-      return block.toString();
-   }
+  
    
 }
