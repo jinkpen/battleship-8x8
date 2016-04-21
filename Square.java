@@ -11,12 +11,13 @@ import java.awt.event.*;
  public class Square extends JButton{
    
    private Block block;
+   private boolean visible;
    
    //Colour definitions
-   public static Color oceanColor = new Color(51, 153, 255);
-   public static Color shipColor = new Color(181, 177, 177);
+   public static Color oceanColor = new Color(57, 101, 150);
+   public static Color shipColor = new Color(153, 153, 153);
    public static Color missColor = new Color(255, 255, 255);
-   public static Color hitColor = new Color(255, 1, 1);
+   public static Color hitColor = new Color(218, 0, 0);
    public static Color sunkColor = new Color(0, 0, 0);
    
    //Constructor
@@ -26,10 +27,13 @@ import java.awt.event.*;
       setBackground(oceanColor);
       setOpaque(true);
       setBorderPainted(true);
+      visible = false;
    }
    
    public void setBlock(Block b) {block = b;}
+   public void setVisible(boolean v) {visible = v;}
    public Block getBlock() {return block;}
-  
+   public boolean getVisible() {return visible;}
+   
    
 }

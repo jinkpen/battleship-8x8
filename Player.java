@@ -65,6 +65,7 @@ public class Player {
          bs.get(i).setBackground(Square.shipColor);
          bs.get(i).setOpaque(true);           
          bs.get(i).setBorderPainted(true);
+         bs.get(i).setEnabled(false);
       }
       //Set battleHasBeenSet to true
       battleHasBeenSet = true;
@@ -89,6 +90,7 @@ public class Player {
          ss.get(i).setBackground(Square.shipColor);
          ss.get(i).setOpaque(true);           
          ss.get(i).setBorderPainted(true);
+         ss.get(i).setEnabled(false);
       }
       //Set subHasBeenSet to true
       subHasBeenSet = true;
@@ -113,6 +115,7 @@ public class Player {
          ds.get(i).setBackground(Square.shipColor);
          ds.get(i).setOpaque(true);           
          ds.get(i).setBorderPainted(true);
+         ds.get(i).setEnabled(false);
       }
       //Set destroyHasBeenSet to true
       destroyHasBeenSet = true;
@@ -237,6 +240,4 @@ public class Player {
       }
       return false;
    }
-
-   
 }
