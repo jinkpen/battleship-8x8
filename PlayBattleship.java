@@ -243,7 +243,6 @@ public class PlayBattleship extends JFrame implements ActionListener {
          for (int i = 0; i < 8; i++) 
             for (int j = 0; j < 8; j++) 
                humanBoard[i][j].setEnabled(true);
-         showMsg("<html><center>Commander, your ship board has been reset!</html>");
       }
       //If player clicks surrender button
       if (e.getSource() == surrender) {
@@ -398,7 +397,6 @@ public class PlayBattleship extends JFrame implements ActionListener {
             //}
         // });
       //t.start();
-   }
 
    //JOptionPane that appears when you win or lose (message displayed depends)
    public void winLoseMsg() {
