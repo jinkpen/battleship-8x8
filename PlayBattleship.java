@@ -13,30 +13,14 @@ import java.util.*;
 public class PlayBattleship extends JFrame implements ActionListener {
    
    //Player object (human) and AI (extends Player) object (ai)
-   Player human = new Player();
-   AI ai = new AI();
+   Player human;
+   AI ai;
    
-   //Message content [message panel]
-   private String[] msgs = {"You set the BATTLESHIP!",
-                            "You set the SUBMARINE!",
-                            "You set the DESTROYER!",
-                            "Your board has been cleared.",
-                            "Could not set ship. Try again",
-                            "Battleship has already been set.",
-                            "Submarine has already been set.",
-                            "Destroyer has already been set.",
-                            "It's your turn!",
-                            "Your BATTLESHIP was hit!",
-                            "Your SUBMARINE was hit!",
-                            "Your DESTROYER was hit!",
-                            "You hit one of the computer's ships!",
-                            "You sunk one of the computer's ships!",
-                            "You missed!"};
-   private JLabel msg; //Label that can be any of the above messages [testing for simplification]
+   private JLabel msg; //Label that can be any of the above messages
    
    //Battleship boards [grid panels]
-   private Square[][] humanBoard = new Square[8][8];
-   private Square[][] aiBoard = new Square[8][8];
+   private Square[][] humanBoard;
+   private Square[][] aiBoard;
    
    //Action buttons [button panel]
    private JButton surrender,     //Button to reveal enemy ships
@@ -52,6 +36,15 @@ public class PlayBattleship extends JFrame implements ActionListener {
    
    //Constructor (for GUI)
    public PlayBattleship(){
+   
+      //Create human and AI players
+      human = new Player();
+      ai = new AI();
+      
+      //Create boards
+      humanBoard = new Square[8][8];
+      aiBoard = new Square[8][8];
+
       //Create message panel
       message = new JPanel(new GridBagLayout());
       message.setPreferredSize(new Dimension(this.WIDTH, 100));
@@ -127,7 +120,7 @@ public class PlayBattleship extends JFrame implements ActionListener {
             //If mouse clicks were invalid
             if (ship == null) {
                bow = null;
-               msg.setText(msgs[4]);  
+               showMsg("Could not set ship. Try again");
                return;
              }
              //If user is trying to set a battleship
@@ -135,42 +128,46 @@ public class PlayBattleship extends JFrame implements ActionListener {
                //If battleship has already been set
                if (human.battleHasBeenSet()) {
                   bow = null; 
-                  msg.setText(msgs[5]);
+                  showMsg("<html><center>Commander, your <b>BATTLESHIP</b> has already been set!<br><br>Reset if you wish to change its position</html>");
                   return;
                }
                //Otherwise, set battleship
                else {
                   human.setBattleship(ship);
-                  msg.setText(msgs[0]);
+                  showMsg("<html><center>Commander, your <b>BATTLESHIP</b> has just been set!</html>");
                }
             }
             else if (ship.size() == 3) {
             //If submarine has already been set
                if (human.subHasBeenSet()) {
                   bow = null;
-                  msg.setText(msgs[6]); 
+                  showMsg("<html><center>Commander, your <b>SUBMARINE</b> has already been set!<br><br>Reset if you wish to change its position</html>");
                   return;
                }
                //Otherwise, set submarine
                else {
                   human.setSubmarine(ship);
-                  msg.setText(msgs[1]);
+                  showMsg("<html><center>Commander, your <b>SUBMARINE</b> has just been set!</html>");
                }
             }
             else if (ship.size() == 2) {
                //If destroyer has already been set
                if (human.destroyHasBeenSet()) {
                   bow = null; 
-                  msg.setText(msgs[7]);
+                  showMsg("<html><center>Commander, your <b>DESTROYER</b> has already been set!<br><br>Reset if you wish to change its position</html>");
                   return;
                }
                //Otherwise, set destroyer
                else {
                   human.setDestroyer(ship);
-                  msg.setText(msgs[2]);
+                  showMsg("<html><center>Commander, your <b>DESTROYER</b> has just been set!</html>");
                }
             }
             bow = null;
+            //If all ships have been set display message
+            if (human.battleHasBeenSet() && human.subHasBeenSet() && human.destroyHasBeenSet()) {
+               showMsg("<html><center>Commander! All of your ships have been set!<br>Are you ready?</html>");
+            }
          }
       }
    };     
@@ -183,21 +180,38 @@ public class PlayBattleship extends JFrame implements ActionListener {
          if (target.getBlock().getOccupied()) {
             target.getBlock().setHit(true);
             target.setBackground(Square.hitColor);
-            int ship = target.getBlock().getShip();
-            human.checkShipSunk(aiBoard, ai, ship);
+            target.setEnabled(false);
+            showMsg("<html><center>Commander! You hit one of the enemy ships!</html>");
+            //If an enemy ship has been sunk
+            if (human.checkShipSunk(aiBoard, ai, target.getBlock().getShip()))
+               showMsg("<html><center>Commander! You sunk one of the enemy ships!</html>");
          }
          else {
             target.setBackground(Square.missColor);
             target.removeActionListener(fire);
+            target.setEnabled(false);
+            showMsg("<html><center>You missed!</html>");
          }
-         if (ai.getBattleSunk() && ai.getSubSunk() && ai.getDestroySunk())
-            ai.setDefeated(true);   //"You win!" message <-----------
-         if (!ai.getDefeated())
-            ai.fire(humanBoard, human);
-         if (human.getBattleSunk() && human.getSubSunk() && human.getDestroySunk())
-            human.setDefeated(true);   //"You lose!" message <----------- 
+         if (ai.getBattleSunk() && ai.getSubSunk() && ai.getDestroySunk()) {
+            showMsg("");
+            ai.setDefeated(true);   
+            //"You win!" message
+            winLoseMsg();
          }
-      };
+         if (!ai.getDefeated()) {
+            target = ai.fire(humanBoard, human);
+            //showMsg("<html><center>Commander, the enemy has made their shot.<br>How will you retaliate?</html>");
+            if (ai.checkShipSunk(humanBoard, human, target.getBlock().getShip()))
+               showMsg("<html><center>Commander! One of our ships have been sunk!</html>");
+         }
+         if (human.getBattleSunk() && human.getSubSunk() && human.getDestroySunk()) {
+            showMsg("");
+            human.setDefeated(true);
+            //"You lose!" message 
+            winLoseMsg();
+         }
+      }
+   };
             
    //Action Listener for buttons panel
    public void actionPerformed(ActionEvent e) {
@@ -218,7 +232,7 @@ public class PlayBattleship extends JFrame implements ActionListener {
                         + "\nYou cannot fire at your own ships."
                         + "\n\nIf you hit an enemy ship, a red dot will appear\nat the location you targeted."
                         + "\nIf you miss your enemy's ship, a white dot\nwill appear in the location you targeted."
-                        + "\nIf you sink an enemy ship, your enemy will say,\n\"You sunk my Battleship!\""
+                        + "\nIf you sink an enemy ship, you will be informed by,\n\"You sunk one of the computer's ships!\""
                         + "\n\nThe first player to sink all of their enemy's ships\nwins the game.",
                         "Tutorial", 
                         JOptionPane.INFORMATION_MESSAGE);
@@ -226,23 +240,25 @@ public class PlayBattleship extends JFrame implements ActionListener {
       //If player clicks reset button  
       if (e.getSource() == reset) {
          human.reset(humanBoard);
-         msg.setText(msgs[3]);
+         showMsg("<html><center>Commander, your ship board has been reset!</html>");
       }
       //If player clicks surrender button
       if (e.getSource() == surrender) {
+         showMsg("");
          ai.reveal(aiBoard);
          human.setDefeated(true);
+         winLoseMsg();
       }
       
       if (e.getSource() == play) {
          //If player has set all their ships
-         if(human.battleHasBeenSet() && human.subHasBeenSet() && human.destroyHasBeenSet()) {
+         if (human.battleHasBeenSet() && human.subHasBeenSet() && human.destroyHasBeenSet()) {
             //Hide reset button
             reset.setVisible(false);
             //Reveal surrender button
             surrender.setVisible(true);
             for (int i = 0; i < 8; i++) {
-               for(int j = 0; j < 8; j++) { 
+               for (int j = 0; j < 8; j++) { 
                   //Remove setShips action listeners from humanBoard
                   humanBoard[i][j].removeActionListener(setShips);
                   //Add fire action listener to aiBoard
@@ -250,7 +266,11 @@ public class PlayBattleship extends JFrame implements ActionListener {
                }
             }
             play.setVisible(false);
-            msg.setText(msgs[8]);
+            showMsg("<html><center>Commander! Where should we fire?</html>");
+         }
+         //If a ship was not set properly let the player know 
+         else {
+            showMsg("<html><center>Commander! You didn't set all your ships!</html>");
          }
       }
    }
@@ -375,6 +395,48 @@ public class PlayBattleship extends JFrame implements ActionListener {
             }
          });
       t.start();
+   }
+
+   //JOptionPane that appears when you win or lose (message displayed depends)
+   public void winLoseMsg() {
+      //If the player won (AI was defeated) print out the win message and ask to play again
+      if (ai.getDefeated()) {
+         int n = JOptionPane.showConfirmDialog(this, "Would you like to play again?",
+                                             "YOU WON!",
+                                             JOptionPane.YES_NO_OPTION);
+         //If the user wishes to play again                            
+         if (n == JOptionPane.YES_OPTION) {
+            //Restart the game
+            restart();
+         //If not, close the game
+         } else if (n == JOptionPane.NO_OPTION) {
+            System.exit(0);
+         }
+      //If the player lost print out the lose message and ask to play again
+      } else if (human.getDefeated()) {
+         int n = JOptionPane.showConfirmDialog(this, "Would you like to play again?",
+                                             "YOU LOST!",
+                                             JOptionPane.YES_NO_OPTION);
+         //If the user wishes to play again                            
+         if (n == JOptionPane.YES_OPTION) {
+            //Restart the game
+            restart();
+         //If not, close the game
+         } else if (n == JOptionPane.NO_OPTION) {
+            System.exit(0);
+         }
+      }
+   }
+   
+   //Resets the game
+   public void restart() {
+      //Disposing the old PlayBattleship object
+      setVisible(false);
+      dispose();
+      //Resetting the count so the human board is created with setShip actionListener
+      Block.setCount(0);
+      //Creating a new PlayBattleship object
+      PlayBattleship game = new PlayBattleship();
    }
 
    //Main function

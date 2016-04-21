@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import javax.swing.Timer;
+import java.awt.event.*;
 
 /**
  * Students: Joanna Bistekos, Jessica Inkpen, Jon MacDonald
@@ -9,7 +11,7 @@ import java.util.ArrayList;
 public class AI extends Player {
    
    private ArrayList<Block> targeted;    //Contains block object that AI has targeted
-   private ArrayList<Block> hits;        //Holds successfully targeted Blocks (that have not been sunk)
+   private ArrayList<Block> hits;        //Holds successfully targeted Blocks [that have not been sunk]
    
    //Constructor
    public AI() {
@@ -162,9 +164,8 @@ public class AI extends Player {
             }
             //If temp is correct size, add each block to destroyer array
             if (temp.size() == 2) {
-               for (int i = 0; i < getDestroyer().length; i++) {
+               for (int i = 0; i < getDestroyer().length; i++)
                   setDestroyer(i, temp.get(i)); 
-               }
                //Set destroyHasBeenSet to true
                setDestroyHasBeenSet(true);
             }
@@ -184,9 +185,8 @@ public class AI extends Player {
             }
             //If temp is correct size, add each block to destroyer array
             if (temp.size() == 2) {
-               for (int i = 0; i < getDestroyer().length; i++) {
+               for (int i = 0; i < getDestroyer().length; i++)
                   setDestroyer(i, temp.get(i)); 
-               }
                //Set destroyHasBeenSet to true
                setDestroyHasBeenSet(true);
             }
@@ -195,16 +195,15 @@ public class AI extends Player {
    }
    
    //Method for computer to fire at enemy ships 
-   public void fire(Square[][] board, Player player) {
+   public Square fire(Square[][] board, Player player) {
       Square target = (Square)null;
       //If there are no blocks in the targeted array
-      if (hits.isEmpty()) {
+      if (hits.isEmpty())
          target = randomShot(board);
-      }
-      else {
+      else
          target = nonRandomShot(board);
-      }
-      takeShot(board, target, player);    
+      takeShot(board, target, player);
+      return target;
    }
    
    //Method that generates a random shot (called if hits array list is empty)
@@ -224,6 +223,7 @@ public class AI extends Player {
    public Square nonRandomShot(Square[][] board) {
       int row;
       int col;
+      //If the the AI got a hit, base shots on the north, south, east or west of the hit
       if (hits.size() == 1) {
          row = hits.get(hits.size()-1).getRow();
          col = hits.get(hits.size()-1).getCol();
@@ -356,7 +356,9 @@ public class AI extends Player {
    //Method to take shot (called from fire)
    public void takeShot(Square[][] board, Square target, Player player) {
       targeted.add(target.getBlock());
+      //If the targetted area has a ship block inside,
       if (target.getBlock().getOccupied()) {
+         //Add it to hits and set it as hit
          hits.add(target.getBlock());
          target.getBlock().setHit(true);
          target.setBackground(Square.hitColor);
@@ -366,31 +368,34 @@ public class AI extends Player {
                if (hits.get(i).getShip() == ship)
                   hits.remove(i);
       }
+      //If not, set block as a miss
       else {
          target.setBackground(Square.missColor);
          target.getBlock().setMiss(true);
       }
    }
       
-   //Method to reveal ai ships if human player surrenders
+   //Method to reveal AI ships if human player surrenders
    public void reveal(Square[][] board) {
       int row = -1;
       int col = -1;
+      //Shows battleship location
       for (int i = 0; i < getBattleship().length; i++) {
          row = getBattleship()[i].getRow();
          col = getBattleship()[i].getCol();
          board[row][col].setBackground(Square.shipColor);
       }
+      //Shows submarine location
       for (int i = 0; i < getSubmarine().length; i++) {
          row = getSubmarine()[i].getRow();
          col = getSubmarine()[i].getCol();
          board[row][col].setBackground(Square.shipColor);
       }
+      //Shows destroyer location
       for (int i = 0; i < getDestroyer().length; i++) {
          row = getDestroyer()[i].getRow();
          col = getDestroyer()[i].getCol();
          board[row][col].setBackground(Square.shipColor);
       }
    }
-         
 }

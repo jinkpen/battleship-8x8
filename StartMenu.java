@@ -59,6 +59,7 @@ public class StartMenu extends JFrame implements ActionListener {
       if (e.getSource() == deploy) {
          //Hides the start menu
          setVisible(false);
+         dispose();
          //Create a Battleship game object
          PlayBattleship play = new PlayBattleship();
       }
