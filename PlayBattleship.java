@@ -397,7 +397,7 @@ public class PlayBattleship extends JFrame implements ActionListener {
             //}
         // });
       //t.start();
-
+   }
    //JOptionPane that appears when you win or lose (message displayed depends)
    public void winLoseMsg() {
       //If the player won (AI was defeated) print out the win message and ask to play again
